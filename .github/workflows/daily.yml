@@ -29,7 +29,7 @@ jobs:
           ls -l b.lzh
           lhasa e b.lzh
           ls -l
-          mv *.TXT bangumi.txt 2>/dev/null || mv *.txt bangumi.txt
+          mv "b${TODAY}.txt" bangumi.txt 2>/dev/null || mv "B${TODAY}.TXT" bangumi.txt
           wc -c bangumi.txt
           rm -f b.lzh
 
