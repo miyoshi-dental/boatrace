@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#07070C">
+<title>SPLASH</title>
+<style>
+:root{
+  --bg:#0C0620; --panel:#191038; --panel2:#221548; --line:#382368;
+  --txt:#F3EEFF; --sub:#9186C4;
+  /* ランク色。1〜6号艇の色とは重ねない */
+  --c-iron:#45426B; --c-low:#6B66A8; --c-mid:#39C5BB;
+  --c-high:#A96BFF; --c-ext:#FF2D95; --c-chaos:#C46BFF;
+  /* GOGOランプ（紫プレミア） */
+  --gogo:#B14BFF; --gogo-lit:#E0A6FF;
+  /* 枠番。数字タイルとロゴでしか使わない */
+  --w1:#FFFFFF; --w2:#4A4A5C; --w3:#FF4757; --w4:#2E8BFF;
+  --w5:#FFD93B; --w6:#26E07F;
+  --rb:linear-gradient(100deg,#FF2D95,#B14BFF,#39C5BB,#00E5FF,#A96BFF,#FF2D95);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--txt)}
+body{
+  font-family:"Hiragino Sans","Yu Gothic",system-ui,sans-serif;
+  padding:0 0 env(safe-area-inset-bottom);-webkit-font-smoothing:antialiased;
+}
+.mono{font-family:"SF Mono",Menlo,Consolas,monospace;font-variant-numeric:tabular-nums}
+.wrap{max-width:520px;margin:0 auto;padding:0 14px}
+
+/* ---------- logo ---------- */
+header{padding:22px 0 16px}
+.logo{display:flex;gap:6px;justify-content:center}
+.ltr{
+  width:46px;height:52px;border-radius:12px;background:var(--c);color:var(--t);
+  display:flex;align-items:center;justify-content:center;
+  font-size:30px;font-weight:900;font-style:italic;letter-spacing:-.02em;
+  box-shadow:0 5px 0 rgba(0,0,0,.45);
+}
+.ltr:nth-child(odd){transform:rotate(-3deg)}
+.ltr:nth-child(even){transform:rotate(3deg)}
+.rainbow-ltr{background:var(--rb)}
+@media (prefers-reduced-motion:no-preference){
+  .ltr{animation:pop .42s cubic-bezier(.3,1.5,.5,1) backwards}
+  .ltr:nth-child(1){animation-delay:.02s}.ltr:nth-child(2){animation-delay:.09s}
+  .ltr:nth-child(3){animation-delay:.16s}.ltr:nth-child(4){animation-delay:.23s}
+  .ltr:nth-child(5){animation-delay:.30s}.ltr:nth-child(6){animation-delay:.37s}
+  @keyframes pop{from{opacity:0;transform:translateY(-16px) scale(.6) rotate(0)}}
+}
+.tagline{margin:12px 0 0;text-align:center;font-size:12.5px;color:var(--sub);letter-spacing:.1em}
+
+.todaybar{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:13px}
+.pill{
+  font-size:11.5px;font-weight:700;padding:6px 12px;border-radius:999px;
+  background:#2A0A3D;color:#E6B3FF;border:1.5px solid var(--c-chaos);
+}
+.pill b{font-size:14px;margin-left:2px}
+.pill.alt{background:#3D0A24;color:#FFB3D6;border-color:var(--c-ext)}
+.pill.date{background:var(--panel);color:var(--sub);border-color:var(--line)}
+.demo{
+  margin-top:14px;padding:9px 12px;border-radius:10px;
+  background:#1E1140;border:1.5px solid #4B2C8A;color:#C9A6FF;
+  font-size:11.5px;line-height:1.6;
+}
+
+/* ---------- scale ---------- */
+.scale{display:flex;gap:5px;margin:16px 0}
+.scale div{flex:1;text-align:center}
+.scale i{display:block;height:8px;border-radius:999px}
+.scale b{display:block;font-size:9.5px;margin-top:6px;font-weight:700;color:var(--sub)}
+
+/* ---------- tabs ---------- */
+.tabs{display:flex;gap:7px;margin:16px 0 14px}
+.tab{
+  flex:1;padding:11px 0;text-align:center;font-size:13.5px;font-weight:800;
+  background:var(--panel);border:2px solid var(--line);border-radius:999px;
+  color:var(--sub);cursor:pointer;font-family:inherit;
+}
+.tab[aria-selected="true"]{
+  color:#FFFFFF;background:var(--gogo);border-color:var(--gogo-lit);
+  box-shadow:0 0 18px rgba(177,75,255,.75), inset 0 0 12px rgba(255,255,255,.28);
+  text-shadow:0 0 8px rgba(255,255,255,.6);
+}
+
+/* ---------- list ---------- */
+.card{
+  display:block;width:100%;text-align:left;background:var(--panel);
+  border:2px solid var(--line);border-radius:16px;padding:0;margin-bottom:11px;
+  overflow:hidden;cursor:pointer;color:inherit;font:inherit;
+  box-shadow:0 4px 0 rgba(0,0,0,.35);
+}
+.card:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.35)}
+.card.chaos{border-color:var(--gogo);box-shadow:0 0 20px rgba(177,75,255,.55),0 4px 0 rgba(0,0,0,.35)}
+.bar{height:6px}
+.rainbow{background:var(--rb)}
+.card .row{display:flex;align-items:center;gap:11px;padding:13px 14px}
+.chip{
+  font-size:11px;font-weight:900;padding:5px 11px;border-radius:999px;
+  border:2px solid currentColor;white-space:nowrap;letter-spacing:.04em;
+}
+/* CHAOS だけ文字も枠もレインボー */
+.chip.rb{
+  background:var(--rb);color:#12082B;border-color:transparent;
+  box-shadow:0 0 14px rgba(196,107,255,.6);
+}
+.rbt{
+  background:var(--rb);-webkit-background-clip:text;background-clip:text;
+  color:transparent;-webkit-text-fill-color:transparent;
+}
+/* 内側の小ラベルはレインボーに巻き込まれると消えるので戻す */
+.rbt small{
+  background:none;color:var(--sub);-webkit-text-fill-color:var(--sub);
+}
+.place{font-size:16px;font-weight:800;flex:1}
+.place em{font-style:normal;color:var(--sub);font-size:11.5px;font-weight:500;display:block;margin-top:3px}
+.score{font-size:31px;font-weight:900;line-height:1;font-style:italic}
+.score small{font-size:9.5px;color:var(--sub);display:block;text-align:right;font-weight:700;font-style:normal;letter-spacing:.14em;margin-top:2px}
+
+/* ---------- detail ---------- */
+.back{
+  background:var(--panel);border:2px solid var(--line);border-radius:999px;
+  color:var(--sub);font:inherit;font-size:12.5px;font-weight:700;
+  padding:8px 16px;margin-bottom:13px;cursor:pointer;
+}
+.panel{background:var(--panel);border:2px solid var(--line);border-radius:18px;overflow:hidden;margin-bottom:12px;box-shadow:0 4px 0 rgba(0,0,0,.35)}
+.head{display:flex;align-items:center;justify-content:space-between;padding:15px 16px}
+.head h2{margin:0;font-size:23px;font-weight:900}
+.head p{margin:4px 0 0;font-size:12px;color:var(--sub)}
+.gauge{padding:6px 16px 22px;text-align:center}
+.big{font-size:74px;font-weight:900;line-height:.9;font-style:italic;letter-spacing:-.04em}
+.meter{height:12px;border-radius:999px;background:#120A2E;margin-top:14px;overflow:hidden;border:2px solid var(--line)}
+.meter i{display:block;height:100%;border-radius:999px}
+.reason{font-size:12.5px;margin-top:14px;line-height:1.75;color:var(--sub)}
+.reason b{color:var(--txt);font-weight:700}
+
+.sect{padding:15px 16px;border-top:2px solid var(--line);background:var(--panel2)}
+.sect h3{margin:0 0 11px;font-size:10.5px;font-weight:900;letter-spacing:.16em;color:var(--sub)}
+.pick{display:flex;align-items:center;gap:6px;padding:6px 0}
+.n{
+  width:44px;height:48px;border-radius:11px;display:flex;align-items:center;
+  justify-content:center;font-size:25px;font-weight:900;font-style:italic;
+  box-shadow:0 3px 0 rgba(0,0,0,.4);
+}
+.pick .sep{color:#5B4A8F;font-size:16px;font-weight:900}
+.pay{margin-left:auto;text-align:right;font-size:22px;font-weight:900;font-style:italic}
+.pay small{display:block;font-size:9.5px;color:var(--sub);font-weight:700;font-style:normal;letter-spacing:.14em;margin-top:2px}
+.pick.sub .n{width:34px;height:38px;font-size:18px;border-radius:9px}
+.pick.sub .pay{font-size:16px;color:var(--sub)}
+
+table{width:100%;border-collapse:collapse;font-size:14px}
+td{padding:7px 0;border-bottom:1.5px solid #33206B}
+tr:last-child td{border-bottom:none}
+td:nth-child(2){color:var(--sub);font-size:11.5px;text-align:center}
+td:last-child{text-align:right;font-weight:800}
+.note{font-size:11.5px;color:var(--sub);padding:13px 16px;border-top:2px solid var(--line);line-height:1.65}
+footer{padding:24px 0 34px;text-align:center;font-size:11px;color:#6A5C9E;line-height:1.8}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="logo" id="logo">
+    <span class="ltr" style="--c:#FFFFFF;--t:#101018">S</span><span class="ltr" style="--c:#4A4A5C;--t:#FFFFFF">P</span><span class="ltr" style="--c:#FF4757;--t:#FFFFFF">L</span><span class="ltr" style="--c:#2E8BFF;--t:#FFFFFF">A</span><span class="ltr" style="--c:#FFD93B;--t:#2A2200">S</span><span class="ltr" style="--c:#26E07F;--t:#04240F">H</span>
+  </div>
+  <p class="tagline">1 2 3 4 5 6 ・ 荒れるレースだけ、拾う。</p>
+  <div class="todaybar">
+    <span class="pill" id="pillBatsu">本日の CHAOS <b>0</b></span>
+    <span class="pill alt" id="pillCho">EXTREME <b>0</b></span>
+    <span class="pill date" id="today"></span>
+  </div>
+  <div class="demo"><b>仮データで動いています。</b>VOLの計算式は実測ですが、風速と会場の値はまだ仮です。集計が終わったら本物に差し替わります。</div>
+</header>
+
+<div class="scale">
+  <div><i style="background:var(--c-iron)"></i><b>IRON</b></div>
+  <div><i style="background:var(--c-low)"></i><b>LOW</b></div>
+  <div><i style="background:var(--c-mid)"></i><b>MID</b></div>
+  <div><i style="background:var(--c-high)"></i><b>HIGH</b></div>
+  <div><i style="background:var(--c-ext)"></i><b>EXTREME</b></div>
+  <div><i class="rainbow"></i><b>CHAOS</b></div>
+</div>
+
+<div class="tabs" role="tablist">
+  <button class="tab" role="tab" aria-selected="true" data-view="hot">勝負レース</button>
+  <button class="tab" role="tab" aria-selected="false" data-view="all">全レース</button>
+</div>
+
+<div id="screen"></div>
+
+<footer>
+  SPLASH v1 ・ 舟券は20歳から<br>
+  当たりを保証するものではありません
+</footer>
+</div>
+
+<script>
+/* ===== 集計済みの実測値（54,610レース / 2025-08〜2026-08） ===== */
+const FACT = {
+  kimarite: {                       // 決まり手ごとの3連単平均配当
+    "逃げ":2572, "まくり":12430, "まくり差し":14832,
+    "差し":10639, "抜き":10281, "恵まれ":9731
+  },
+  windP1: [                         // 風速帯ごとの1コース1着率(%)
+    {max:0,  p:55.1, label:"無風"},
+    {max:2,  p:57.3, label:"1-2m"},
+    {max:4,  p:54.5, label:"3-4m"},
+    {max:6,  p:49.4, label:"5-6m"},
+    {max:99, p:44.3, label:"7m以上"}
+  ],
+  rank: [                           // VOL→ランク
+    {min:95, name:"CHAOS",   color:"var(--c-chaos)", rainbow:true},
+    {min:80, name:"EXTREME", color:"var(--c-ext)"},
+    {min:65, name:"HIGH",    color:"var(--c-high)"},
+    {min:48, name:"MID",     color:"var(--c-mid)"},
+    {min:18, name:"LOW",     color:"var(--c-low)"},
+    {min:0,  name:"IRON",    color:"var(--c-iron)"}
+  ]
+};
+
+const VENUES = ["桐生","戸田","江戸川","平和島","多摩川","浜名湖","蒲郡","常滑","津",
+  "三国","びわこ","住之江","尼崎","鳴門","丸亀","児島","宮島","徳山","下関","若松",
+  "芦屋","福岡","唐津","大村"];
+
+/* 会場ごとの1コース1着率の傾向（仮。集計後に実測へ差し替え） */
+const VENUE_BIAS = {"戸田":-8,"江戸川":-7,"平和島":-4,"若松":-1,"住之江":1,"徳山":4,"大村":7,"芦屋":4};
+
+/* 決定的な擬似乱数。同じレースなら毎回同じ値になる */
+function seeded(str){
+  let h=2166136261;
+  for(const ch of str){ h^=ch.charCodeAt(0); h=Math.imul(h,16777619); }
+  return ()=>{ h^=h<<13; h^=h>>>17; h^=h<<5; return ((h>>>0)%10000)/10000; };
+}
+
+function windBand(w){ return FACT.windP1.find(b=>w<=b.max); }
+
+/* 風速の出現頻度も実測に合わせる */
+const WIND_DIST = [[0,.065],[1,.21],[2,.22],[3,.19],[4,.16],[5,.075],[6,.04],[7,.025],[8,.015]];
+function sampleWind(u){
+  let acc=0;
+  for(const [w,p] of WIND_DIST){ acc+=p; if(u<acc) return w; }
+  return 8;
+}
+
+/* ランクの出現率は実測どおりに固定する。
+   荒れやすさの順位を、そのまま実測の頻度に当てはめる（分位点方式） */
+const RANK_SHARE = [
+  {share:.006, lo:95, hi:99},   // CHAOS   10万円〜
+  {share:.072, lo:80, hi:94},   // EXTREME 2万〜10万
+  {share:.088, lo:65, hi:79},   // HIGH    1万〜2万
+  {share:.141, lo:48, hi:64},   // MID     5千〜1万
+  {share:.500, lo:18, hi:47},   // LOW     1千〜5千
+  {share:.193, lo:2,  hi:17}    // IRON    〜1千
+];
+
+function buildRace(venue, no){
+  const r = seeded(venue+no);
+  const wind = sampleWind(r());
+  const wave = Math.floor(r()*(wind*2+3));
+  const band = windBand(wind);
+  const p1 = band.p + (VENUE_BIAS[venue]||0) + (r()*10-5);
+  return {venue, no, wind, wave, band, p1:p1.toFixed(1),
+          raw:(60-p1) + r()*6, rnd:r()};
+}
+
+const ALL = VENUES.flatMap(v=>Array.from({length:12},(_,i)=>buildRace(v,i+1)))
+                  .sort((a,b)=>b.raw-a.raw);
+
+/* 生値の順位 → 実測頻度に沿ったVOLとランク */
+(function calibrate(){
+  const n = ALL.length;
+  let cursor = 0;
+  RANK_SHARE.forEach((band,bi)=>{
+    const count = bi===RANK_SHARE.length-1 ? n-cursor : Math.max(1, Math.round(n*band.share));
+    for(let k=0; k<count && cursor<n; k++, cursor++){
+      const r = ALL[cursor];
+      const t = count<=1 ? 0 : k/(count-1);
+      r.score = Math.round(band.hi - t*(band.hi-band.lo));
+      r.rank  = FACT.rank.find(x=>r.score>=x.min);
+
+      const heads = r.score>=95 ? [5,6,4] : r.score>=80 ? [4,5,6]
+                  : r.score>=65 ? [3,4,2] : r.score>=48 ? [1,2,3]
+                  : r.score>=18 ? [1,1,1,2] : [1,1,1,1,1,2];
+      const head = heads[Math.floor(r.rnd*heads.length)];
+      const rest = [1,2,3,4,5,6].filter(x=>x!==head);
+      const pick = (arr,off) => arr[Math.floor(((r.rnd*off*7.3)%1)*arr.length)];
+      const second = pick(rest,1);
+      const third  = pick(rest.filter(x=>x!==second),2);
+      const alt    = pick(rest.filter(x=>x!==second&&x!==third),3);
+
+      r.km = head===1 ? "逃げ" : head<=3 ? "まくり" : (r.rnd>0.5 ? "まくり差し" : "まくり");
+      r.pay = Math.round(FACT.kimarite[r.km]*(0.45+r.score/70)*(0.8+r.rnd*0.5)/10)*10;
+      r.main = [head,second,third];
+      r.sub  = [head,second,alt];
+    }
+  });
+})();
+
+/* ---------- 描画 ---------- */
+const WCOL = {1:["var(--w1)","#0B0B0B"],2:["var(--w2)","#FFF"],3:["var(--w3)","#FFF"],
+              4:["var(--w4)","#FFF"],5:["var(--w5)","#2A2200"],6:["var(--w6)","#04240F"]};
+
+const tile = (n,cls="") =>
+  `<span class="n ${cls}" style="background:${WCOL[n][0]};color:${WCOL[n][1]}">${n}</span>`;
+
+const yen = n => n.toLocaleString("ja-JP");
+
+function card(r,i){
+  return `<button class="card${r.rank.rainbow?" chaos":""}" data-i="${i}">
+    <div class="bar ${r.rank.rainbow?'rainbow':''}" style="${r.rank.rainbow?'':'background:'+r.rank.color}"></div>
+    <div class="row">
+      <span class="chip${r.rank.rainbow?" rb":""}" style="${r.rank.rainbow?"":"color:"+r.rank.color}">${r.rank.name}</span>
+      <span class="place">${r.venue} ${r.no}R<em>風${r.wind}m ・ 波${r.wave}cm</em></span>
+      <span class="score mono${r.rank.rainbow?" rbt":""}" style="${r.rank.rainbow?"":"color:"+r.rank.color}">${r.score}<small>VOL</small></span>
+    </div>
+  </button>`;
+}
+
+function detail(r){
+  const sim = [
+    ["5-4-6","鳴門12R",76480],["5-3-6","宮島4R",23110],
+    ["2-5-3","徳山1R",14910],["4-2-6","津2R",10080]
+  ];
+  return `
+  <button class="back">← 一覧にもどる</button>
+  <div class="panel">
+    <div class="bar ${r.rank.rainbow?'rainbow':''}" style="${r.rank.rainbow?'':'background:'+r.rank.color}"></div>
+    <div class="head">
+      <div><h2>${r.venue} ${r.no}R</h2><p>風 ${r.wind}m ・ 波 ${r.wave}cm</p></div>
+      <span class="chip${r.rank.rainbow?" rb":""}" style="${r.rank.rainbow?"":"color:"+r.rank.color}">${r.rank.name}</span>
+    </div>
+
+    <div class="gauge">
+      <div class="big mono${r.rank.rainbow?" rbt":""}" style="${r.rank.rainbow?"":"color:"+r.rank.color}">${r.score}</div>
+      <div class="meter"><i style="width:${r.score}%;${r.rank.rainbow?'background:var(--rb)':'background:'+r.rank.color}"></i></div>
+      <p class="reason">
+        風速 <b>${r.band.label}</b> のとき、1コースの1着率は実測で <b>${r.band.p}%</b>。
+        この会場の傾向を足すと <b>${r.p1}%</b> まで下がります。<br>
+        VOL（荒れやすさ）はこの数字から計算しています。
+      </p>
+    </div>
+
+    <div class="sect">
+      <h3>本命穴</h3>
+      <div class="pick">
+        ${tile(r.main[0])}<span class="sep">-</span>${tile(r.main[1])}<span class="sep">-</span>${tile(r.main[2])}
+        <span class="pay mono${r.rank.rainbow?" rbt":""}" style="${r.rank.rainbow?"":"color:"+r.rank.color}">${yen(r.pay)}<small>想定配当</small></span>
+      </div>
+      <div class="pick sub">
+        ${tile(r.sub[0])}<span class="sep">-</span>${tile(r.sub[1])}<span class="sep">-</span>${tile(r.sub[2])}
+        <span class="pay mono">${yen(Math.round(r.pay*0.62/10)*10)}</span>
+      </div>
+    </div>
+
+    <div class="sect">
+      <h3>この決まり手なら</h3>
+      <p class="reason" style="margin:0">
+        想定は <b>${r.km}</b>。実測の平均配当は <b>${yen(FACT.kimarite[r.km])}円</b>。
+        逃げの ${yen(FACT.kimarite["逃げ"])}円 に対して
+        <b>${(FACT.kimarite[r.km]/FACT.kimarite["逃げ"]).toFixed(1)}倍</b> です。
+      </p>
+    </div>
+
+    <div class="sect">
+      <h3>似た条件の過去レース</h3>
+      <table>${sim.map(([m,p,v])=>
+        `<tr><td class="mono">${m}</td><td>${p}</td><td class="mono" style="color:${v>=50000?'var(--c-ext)':'inherit'}">${yen(v)}円</td></tr>`
+      ).join("")}</table>
+    </div>
+
+    <p class="note">${
+      r.rank.name==="CHAOS" ? "CHAOSは確定ではありません。過去365日で302本出て、荒れなかった回もあります。"
+      : r.rank.name==="IRON" ? "IRONでも1号艇が飛ぶことはあります。買わない判断の目安です。"
+      : r.rank.name+"は過去365日で"+(r.rank.name==="EXTREME"?"3922":"4791")+"本。当たりを保証するものではありません。"
+    }</p>
+  </div>`;
+}
+
+let view="hot", open=null;
+const screen=document.getElementById("screen");
+
+function render(){
+  if(open!==null){ screen.innerHTML=detail(ALL[open]); return; }
+  const list = view==="hot" ? ALL.filter(r=>r.score>=80).slice(0,12) : ALL.slice(0,60);
+  screen.innerHTML = list.length
+    ? list.map((r,i)=>card(r,ALL.indexOf(r))).join("")
+    : `<p class="reason" style="text-align:center;padding:30px 0">今日は EXTREME 以上のレースがありません。</p>`;
+}
+
+document.addEventListener("click",e=>{
+  const t=e.target.closest(".tab");
+  if(t){ view=t.dataset.view; open=null;
+    document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected",x===t));
+    render(); return; }
+  const c=e.target.closest(".card");
+  if(c){ open=+c.dataset.i; window.scrollTo(0,0); render(); return; }
+  if(e.target.closest(".back")){ open=null; render(); }
+});
+
+document.getElementById("today").textContent =
+  new Date().toLocaleDateString("ja-JP",{month:"numeric",day:"numeric",weekday:"short"});
+document.querySelector("#pillBatsu b").textContent = ALL.filter(r=>r.rank.name==="CHAOS").length;
+document.querySelector("#pillCho b").textContent  = ALL.filter(r=>r.rank.name==="EXTREME").length;
+render();
+</script>
+</body>
+</html>
